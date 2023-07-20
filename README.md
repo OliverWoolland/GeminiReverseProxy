@@ -13,9 +13,8 @@ foo@bar:~$ cp .env.template .env # n.b. the . is essential!
 foo@bar:~$ nano .env # for example
 ```
 
-Three variables are needed:
+Two variables are needed:
 
-`DUCKDNS_TOKEN` your personal token on duckdns.org
 `URL` the URL you wish to get certificates for 
 `EMAIL` the email address registering for the certificates
 

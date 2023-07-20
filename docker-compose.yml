@@ -12,8 +12,7 @@ services:
       - TZ=Europe/London
       - URL=${URL}
       - SUBDOMAINS=wildcard
-      - VALIDATION=duckdns
-      - DUCKDNSTOKEN=${DUCKDNS_TOKEN}
+      - VALIDATION=http
       - CERTPROVIDER=zerossl
       - EMAIL=${EMAIL}
     volumes:
