@@ -54,5 +54,16 @@ server {
 }
 ```
 
-
 ## Launch ##
+
+To launch the service run docker-compose:
+
+```console
+foo@bar:~$ docker-compose up
+```
+
+If you are happy and there are no errors, launch the service in a detached state:
+
+```console
+foo@bar:~$ docker-compose up --detach
+```
