@@ -18,14 +18,17 @@ services:
       - EMAIL=${EMAIL}
     volumes:
       - ${PWD}/data/swag/swag_config_store:/config
-    #restart: unless-stopped
+    restart: unless-stopped
     ports:
       - 443:443
       - 80:80 
     networks:
-      smalldata:
-        ipv4_address: 172.31.6.2
+      swag:
     healthcheck:
       test: ["CMD", "cat", "/etc/letsencrypt/live/${URL}/privkey.pem"]
       interval: 10s
       timeout: 10s
+      
+networks:
+  swag:
+    driver: bridge
