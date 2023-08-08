@@ -1,5 +1,20 @@
 version: "3.9"
-    
+secrets:
+  AUTHELIA_JWT_SECRET:
+    file: ${PWD}/data/authelia/secrets/AUTHELIA_JWT_SECRET
+  SESSION_SECRET:
+    file: ${PWD}/data/authelia/secrets/SESSION_SECRET
+  STORAGE_PASSWORD:
+    file: ${PWD}/data/authelia/secrets/STORAGE_PASSWORD
+  STORAGE_ENCRYPTION_KEY:
+    file: ${PWD}/data/authelia/secrets/STORAGE_ENCRYPTION_KEY
+  LLDAP_JWT_SECRET:
+    file: ${PWD}/data/lldap/secrets/LLDAP_JWT_SECRET
+  LLDAP_PASSWORD:
+    file: ${PWD}/data/lldap/secrets/LLDAP_PASSWORD
+  CASBIN_STORAGE_PASSWORD:
+    file: ${PWD}/data/casbin/secrets/CASBIN_STORAGE_PASSWORD
+
 services:
   swag:
     image: lscr.io/linuxserver/swag
@@ -10,24 +25,114 @@ services:
       - PUID=1000
       - PGID=1000
       - TZ=Europe/London
-      - URL=${URL}
+      - Url=${URL}
       - SUBDOMAINS=wildcard
       - VALIDATION=http
       - CERTPROVIDER=zerossl
       - EMAIL=${EMAIL}
     volumes:
       - ${PWD}/data/swag/swag_config_store:/config
+      - ${PWD}/data/swag/config/snippets/location.conf:/config/snippets/authelia/location.conf
+      - ${PWD}/data/swag/config/snippets/authrequest.conf:/config/snippets/authelia/authrequest.conf
+      - ${PWD}/data/swag/config/proxy-confs/authelia.subdomain.conf:/config/nginx/proxy-confs/authelia.subdomain.conf
+      - ${PWD}/data/swag/config/proxy-confs/ldap-admin.subdomain.conf:/config/nginx/proxy-confs/ldap-admin.subdomain.conf
     restart: unless-stopped
     ports:
       - 443:443
-      - 80:80 
+      - 80:80
     networks:
-      swag:
+      gemini:
     healthcheck:
       test: ["CMD", "cat", "/etc/letsencrypt/live/${URL}/privkey.pem"]
       interval: 10s
       timeout: 10s
-      
+
+  authelia:
+    container_name: gemini-authelia
+    image: authelia/authelia
+    depends_on:
+      - authelia-postgres
+      - lldap
+      # - redis
+    #restart: unless-stopped
+    volumes:
+      - ${PWD}/data/authelia/config:/config
+    secrets: [AUTHELIA_JWT_SECRET, SESSION_SECRET, STORAGE_PASSWORD, STORAGE_ENCRYPTION_KEY, LLDAP_PASSWORD]
+    environment:
+      TZ: 'Europe/London'
+      # Secrets
+      AUTHELIA_JWT_SECRET_FILE: /run/secrets/AUTHELIA_JWT_SECRET
+      AUTHELIA_SESSION_SECRET_FILE: /run/secrets/SESSION_SECRET
+      AUTHELIA_STORAGE_POSTGRES_PASSWORD_FILE: /run/secrets/STORAGE_PASSWORD
+      AUTHELIA_STORAGE_ENCRYPTION_KEY_FILE: /run/secrets/STORAGE_ENCRYPTION_KEY
+      AUTHELIA_AUTHENTICATION_BACKEND_LDAP_PASSWORD_FILE: /run/secrets/LLDAP_PASSWORD
+      # General
+      AUTHELIA_DEFAULT_REDIRECTION_URL: https://whoami.geminiio.duckdns.org/
+      # Session
+      AUTHELIA_SESSION_EXPIRATION: 1h
+      AUTHELIA_SESSION_INACTIVITY: 20m
+      AUTHELIA_SESSION_REMEMBER_ME_DURATION: 12h
+      # Postgres
+      AUTHELIA_STORAGE_POSTGRES_HOST: gemini-authelia-postgres
+      AUTHELIA_STORAGE_POSTGRES_PORT: 5432
+      AUTHELIA_STORAGE_POSTGRES_DATABASE: authelia
+      AUTHELIA_STORAGE_POSTGRES_USERNAME: authelia
+      # LDAP
+      AUTHELIA_AUTHENTICATION_BACKEND_LDAP_URL: ldap://gemini-ldap:3890
+      AUTHELIA_AUTHENTICATION_BACKEND_LDAP_BASE_DN: dc=example,dc=com
+      AUTHELIA_AUTHENTICATION_BACKEND_LDAP_ADDITIONAL_USERS_DN: ou=people
+      AUTHELIA_AUTHENTICATION_BACKEND_LDAP_ADDITIONAL_GROUPS_DN: ou=groups
+      AUTHELIA_AUTHENTICATION_BACKEND_LDAP_GROUP_NAME_ATTRIBUTE: cn
+      AUTHELIA_AUTHENTICATION_BACKEND_LDAP_USER: cn=admin,ou=people,dc=example,dc=com
+      # Redis
+      # AUTHELIA_SESSION_REDIS_HOST: gemini-redis
+      # AUTHELIA_SESSION_REDIS_PORT: 6379
+    networks:
+      gemini:
+
+  authelia-postgres:
+    container_name: gemini-authelia-postgres
+    image: postgres
+    #restart: unless-stopped
+    secrets: [STORAGE_PASSWORD]
+    environment:
+      POSTGRES_USER: authelia
+      POSTGRES_PASSWORD_FILE: /run/secrets/STORAGE_PASSWORD
+      POSTGRES_DB: authelia
+    networks:
+      gemini:
+
+
+  lldap:
+    container_name: gemini-ldap
+    image: nitnelave/lldap:stable
+    restart: unless-stopped
+    secrets: [LLDAP_JWT_SECRET, LLDAP_PASSWORD]
+    environment:
+      UID: 1000
+      GID: 1000
+      TZ: Europe/London
+      LLDAP_JWT_SECRET_FILE: /run/secrets/LLDAP_JWT_SECRET
+      LLDAP_LDAP_USER_PASS_FILE: /run/secrets/LLDAP_PASSWORD
+      LLDAP_LDAP_BASE_DN: dc=example,dc=com
+    volumes:
+      - ${PWD}/data/lldap/data:/data
+    networks:
+      gemini:
+
+  casbin-postgres:
+    container_name: gemini-casbin-postgres
+    image: postgres
+    #restart: always
+    secrets: [CASBIN_STORAGE_PASSWORD]
+    environment:
+      POSTGRES_USER: casbin
+      POSTGRES_PASSWORD_FILE: /run/secrets/CASBIN_STORAGE_PASSWORD
+      POSTGRES_DB: casbin
+    networks:
+      gemini:
+
+
 networks:
-  swag:
+  gemini:
     driver: bridge
