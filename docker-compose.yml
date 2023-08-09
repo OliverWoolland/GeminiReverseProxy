@@ -25,6 +25,7 @@ services:
       - PUID=1000
       - PGID=1000
       - TZ=Europe/London
+      - URL=${URL}
       - SUBDOMAINS=wildcard
       - VALIDATION=http
       - CERTPROVIDER=zerossl
