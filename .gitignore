@@ -1,2 +1,7 @@
-data/swag/swag_config_store/*
 .env
+data/authelia/secrets/*
+data/authelia/config/*
+data/lldap/data/*
+data/lldap/secrets/*
+data/swag/swag_config_store/*
+data/casbin/secrets/*
