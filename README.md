@@ -6,6 +6,8 @@ The proxy is implemented using the [Swag](https://docs.linuxserver.io/general/sw
 
 ## Setup ##
 
+### Setting important variables ###
+
 A template environment is provided, this should be copied and populated.
 
 ```console
@@ -17,6 +19,14 @@ Two variables are needed:
 
 `URL` the URL you wish to get certificates for 
 `EMAIL` the email address registering for the certificates
+
+### Generating passwords ###
+
+This service uses lots of secrets which humans do not need to know, they are created by running:
+
+```console
+foo@bar:~$ ./generate_passwords.sh
+```
 
 ## Configuration ##
 
