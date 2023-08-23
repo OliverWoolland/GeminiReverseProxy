@@ -47,8 +47,18 @@ services:
       interval: 10s
       timeout: 10s
 
+  whoami:
+    container_name: gemini-whoami
+    image: docker.io/traefik/whoami
+    #restart: unless-stopped
+    networks:
+      gemini:
+    expose:
+      - 80
+    environment:
+      TZ: 'Europe/London'
   authelia:
-    container_name: gemini-authelia
+    container_name: authelia
     image: authelia/authelia
     depends_on:
       - authelia-postgres
@@ -67,7 +77,10 @@ services:
       AUTHELIA_STORAGE_ENCRYPTION_KEY_FILE: /run/secrets/STORAGE_ENCRYPTION_KEY
       AUTHELIA_AUTHENTICATION_BACKEND_LDAP_PASSWORD_FILE: /run/secrets/LLDAP_PASSWORD
       # General
-      AUTHELIA_DEFAULT_REDIRECTION_URL: https://whoami.geminiio.duckdns.org/
+      AUTHELIA_DEFAULT_REDIRECTION_URL: https://mcfe.itservices.manchester.ac.uk/whoami
+      AUTHELIA_SERVER_PATH: "authelia"
+      AUTHELIA_SERVER_BUFFERS_READ: 16384
+      AUTHELIA_SERVER_BUFFERS_WRITE: 16384
       # Session
       AUTHELIA_SESSION_EXPIRATION: 1h
       AUTHELIA_SESSION_INACTIVITY: 20m
