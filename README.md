@@ -6,6 +6,8 @@ The proxy is implemented using the [Swag](https://docs.linuxserver.io/general/sw
 
 ## Setup ##
 
+### Setting important variables ###
+
 A template environment is provided, this should be copied and populated.
 
 ```console
@@ -13,11 +15,18 @@ foo@bar:~$ cp .env.template .env # n.b. the . is essential!
 foo@bar:~$ nano .env # for example
 ```
 
-Three variables are needed:
+Two variables are needed:
 
-`DUCKDNS_TOKEN` your personal token on duckdns.org
 `URL` the URL you wish to get certificates for 
 `EMAIL` the email address registering for the certificates
+
+### Generating passwords ###
+
+This service uses lots of secrets which humans do not need to know, they are created by running:
+
+```console
+foo@bar:~$ ./generate_passwords.sh
+```
 
 ## Configuration ##
 

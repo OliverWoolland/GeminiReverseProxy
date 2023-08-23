@@ -27,8 +27,8 @@ services:
       - TZ=Europe/London
       - URL=${URL}
       - SUBDOMAINS=wildcard
-      - VALIDATION=dns
-      - DNSPLUGIN=standalone
+      - VALIDATION=duckdns
+      - DUCKDNSTOKEN=${DUCKDNS_TOKEN}
       - CERTPROVIDER=zerossl
       - EMAIL=${EMAIL}
     volumes:
@@ -40,11 +40,9 @@ services:
     restart: unless-stopped
     ports:
       - 443:443
-      - 80:80
-      - 53:53/udp
+      - 80:80 
     networks:
       gemini:
-        ipv4_address: 172.31.5.3
     healthcheck:
       test: ["CMD", "cat", "/etc/letsencrypt/live/${URL}/privkey.pem"]
       interval: 10s
@@ -92,7 +90,6 @@ services:
       # AUTHELIA_SESSION_REDIS_PORT: 6379
     networks:
       gemini:
-        ipv4_address: 172.31.5.4
 
   authelia-postgres:
     container_name: gemini-authelia-postgres
@@ -105,7 +102,6 @@ services:
       POSTGRES_DB: authelia
     networks:
       gemini:
-        ipv4_address: 172.31.5.5
 
 
   lldap:
@@ -124,7 +120,6 @@ services:
       - ${PWD}/data/lldap/data:/data
     networks:
       gemini:
-        ipv4_address: 172.31.5.6
 
   casbin-postgres:
     container_name: gemini-casbin-postgres
@@ -137,12 +132,7 @@ services:
       POSTGRES_DB: casbin
     networks:
       gemini:
-        ipv4_address: 172.31.5.7
 
 networks:
   gemini:
     driver: bridge
-    ipam:
-     config:
-       - subnet: 172.31.5.0/24
-         gateway: 172.31.5.1
