@@ -16,7 +16,7 @@ secrets:
     file: ${PWD}/data/casbin/secrets/CASBIN_STORAGE_PASSWORD
 
 services:
-  swag:
+  proxy:
     image: lscr.io/linuxserver/swag
     container_name: gemini-swag
     cap_add:
@@ -27,7 +27,8 @@ services:
       - TZ=Europe/London
       - URL=${URL}
       - SUBDOMAINS=wildcard
-      - VALIDATION=http
+      - VALIDATION=duckdns
+      - DUCKDNSTOKEN=${DUCKDNS_TOKEN}
       - CERTPROVIDER=zerossl
       - EMAIL=${EMAIL}
     volumes:
@@ -39,7 +40,7 @@ services:
     restart: unless-stopped
     ports:
       - 443:443
-      - 80:80
+      - 80:80 
     networks:
       gemini:
     healthcheck:
@@ -144,7 +145,6 @@ services:
       POSTGRES_DB: casbin
     networks:
       gemini:
-
 
 networks:
   gemini:
