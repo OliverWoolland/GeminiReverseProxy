@@ -1,2 +1,3 @@
 data/swag/swag_config_store/*
+data/nginx/data/*
 .env
