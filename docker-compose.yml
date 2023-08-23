@@ -18,7 +18,7 @@ secrets:
 services:
   proxy:
     image: lscr.io/linuxserver/swag
-    container_name: gemini-swag
+    container_name: gemini-proxy
     cap_add:
       - NET_ADMIN
     environment:
