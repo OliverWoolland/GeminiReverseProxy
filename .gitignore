@@ -3,4 +3,6 @@ data/nginx/data/*
 data/authelia/secrets/*
 data/authelia/config/*
 data/casbin/secrets/*
+data/lldap/secrets/*
+data/lldap/data/*
 .env
