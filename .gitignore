@@ -1,3 +1,6 @@
 data/swag/swag_config_store/*
 data/nginx/data/*
+data/authelia/secrets/*
+data/authelia/config/*
+data/casbin/secrets/*
 .env
