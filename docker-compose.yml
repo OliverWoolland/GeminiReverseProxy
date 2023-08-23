@@ -54,10 +54,9 @@ services:
     #restart: unless-stopped
     networks:
       gemini:
-    expose:
-      - 80
     environment:
       TZ: 'Europe/London'
+      
   authelia:
     container_name: authelia
     image: authelia/authelia

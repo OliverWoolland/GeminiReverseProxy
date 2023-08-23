@@ -1,0 +1,13 @@
+version: "3.9"
+services:
+  nginx-proxy:
+    image: jwilder/nginx-proxy
+    ports:
+      - "80:80"
+    volumes:
+      - /var/run/docker.sock:/tmp/docker.sock:ro
+
+  whoami:
+    environment:
+      TZ: 'Europe/London'
+      VIRTUAL_HOST=whoami.mcfe.itservices.manchester.ac.uk
