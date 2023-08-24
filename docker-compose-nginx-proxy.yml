@@ -8,7 +8,12 @@ services:
     volumes:
       - /var/run/docker.sock:/tmp/docker.sock:ro
 
+  
   whoami:
+    container_name: gemini-whoami
+    image: docker.io/traefik/whoami
+    networks:
+      gemini:   
     environment:
       TZ: 'Europe/London'
       VIRTUAL_HOST: 'whoami.gemini-test.duckdns.org'
