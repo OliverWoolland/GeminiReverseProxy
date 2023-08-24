@@ -6,4 +6,4 @@ data/lldap/data/*
 data/lldap/secrets/*
 data/swag/swag_config_store/*
 data/casbin/secrets/*
-data/certs/*
+certs/*
