@@ -48,6 +48,14 @@ services:
       interval: 10s
       timeout: 10s
 
+  duckdns:
+    image: lscr.io/linuxserver/duckdns:latest
+    container_name: duckdns
+    environment:
+      - SUBDOMAINS=gemini-test
+      - TOKEN=${DUCKDNS_TOKEN}
+    restart: unless-stopped
+
   whoami:
     container_name: gemini-whoami
     image: docker.io/traefik/whoami
