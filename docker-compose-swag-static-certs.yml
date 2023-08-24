@@ -1,0 +1,18 @@
+version: "3.9"
+
+services:
+  proxy:
+    container_name: gemini-proxy-static-swag
+    volumes:
+      # Persistent store
+      - ${PWD}/data/swag/swag_config_store:/config
+      # Static certs
+      - ${PWD}/data/swag/config/nginx/ssl.conf:/config/nginx/static-ssl.conf
+      - ${PWD}/certs/__mcfe_itservices_manchester_ac_uk.pem:/config/keys/static-cert.pem
+      - ${PWD}/certs/__mcfe_itservices_manchester_ac_uk.key:/config/keys/static-cert.key
+      # Authelia config
+      - ${PWD}/data/swag/config/snippets/location.conf:/config/snippets/authelia/location.conf
+      - ${PWD}/data/swag/config/snippets/authrequest.conf:/config/snippets/authelia/authrequest.conf
+      # Subdomains
+      - ${PWD}/data/swag/config/proxy-confs/authelia.subdomain.conf:/config/nginx/proxy-confs/authelia.subdomain.conf
+      - ${PWD}/data/swag/config/proxy-confs/ldap-admin.subdomain.conf:/config/nginx/proxy-confs/ldap-admin.subdomain.conf
