@@ -4,6 +4,8 @@ A containerised reverse proxy for the Gemini / MCFE server.
 
 The proxy is implemented using the [Swag](https://docs.linuxserver.io/general/swag) container by linuxserver.io.
 
+Possibly also [Nginx Proxy Manager](https://nginxproxymanager.com/).
+
 ## Setup ##
 
 ### Setting important variables ###
